@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<!-- title-view.fxml -->
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.TitleController"
+           styleClass="title-screen">
+    <VBox alignment="CENTER" spacing="20">
+        <Label text="BATALLA NAVAL" styleClass="game-title"/>
+        <Button fx:id="startButton" text="Nueva Partida" onAction="#handleStart"/>
+        <Button fx:id="loadButton" text="Cargar Partida" onAction="#handleLoad"/>
+    </VBox>
+</StackPane>

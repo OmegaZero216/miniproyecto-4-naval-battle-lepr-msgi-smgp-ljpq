@@ -12,8 +12,10 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.event.CellClickAdapt
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.event.CellHoverAdapter;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Board;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Coordinate;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.GameResult;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.CellShapeFactory;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.SceneManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +49,7 @@ public class GameController {
     @FXML private Button debugButton;
 
     private GameService gameService;
+    private SceneManager sceneManager;
     private boolean debugMode = false;
 
     // Referencia a los nodos renderizados por coordenada, para poder
@@ -58,6 +61,10 @@ public class GameController {
      * FXML controllers cannot use constructor injection, so this setter
      * is our compromise while keeping the dependency explicit).
      */
+
+    public void setSceneManager (SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
+    }
     public void setGameService(GameService gameService) {
         this.gameService = gameService;
         renderMachineBoard(gameService.getMachineBoard());
@@ -131,8 +138,9 @@ public class GameController {
 
     private void checkGameOver() {
         if (gameService.getMachineBoard().isFleetSunk()) {
-            gameOverLabel.setText("¡Victoria! Hundiste toda la flota enemiga.");
-            gameOverOverlay.setVisible(true);
+            GameResult result = new GameResult(true, /* shotsFired */ 0, 0, 0);
+            sceneManager.navigateToResults(result);
         }
+        // TODO: rama simétrica cuando gane la máquina (Etapa de IA/turnos completa)
     }
 }
