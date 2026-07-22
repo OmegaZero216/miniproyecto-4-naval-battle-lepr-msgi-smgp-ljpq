@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<!-- preparation-view.fxml -->
+<?import javafx.geometry.Insets?>
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.PreparationController
-">
+            fx:controller="org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.PreparationController">
+
     <center>
-        <GridPane fx:id="placementGrid"/>
+        <StackPane>
+            <HBox spacing="30" alignment="CENTER">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                <VBox spacing="10" alignment="TOP_CENTER" styleClass="fleet-panel">
+                    <Label text="Tu flota" styleClass="board-title"/>
+                    <VBox fx:id="fleetPanel" spacing="12"/>
+                </VBox>
+                <VBox alignment="CENTER" spacing="10">
+                    <Label text="Tu tablero" styleClass="board-title"/>
+                    <GridPane fx:id="placementGrid"/>
+                </VBox>
+            </HBox>
+            <!-- Capa flotante para el "fantasma" del barco arrastrado. mouseTransparent
+                 para que los clicks/drags pasen a través hacia el tablero de abajo. -->
+            <Pane fx:id="dragOverlay" mouseTransparent="true" pickOnBounds="false"/>
+        </StackPane>
     </center>
+
     <bottom>
-        <HBox alignment="CENTER" spacing="10">
-            <Button fx:id="rotateButton" text="Rotar (R)"/>
-            <Button fx:id="confirmButton" text="Confirmar (Enter)" onAction="#handleConfirm"/>
-        </HBox>
+        <VBox alignment="CENTER" spacing="8">
+            <Label fx:id="hintLabel" styleClass="hint-label"/>
+            <HBox alignment="CENTER" spacing="10">
+                <Button fx:id="rotateButton" text="Rotar (R)" onAction="#handleRotate"/>
+                <Button fx:id="confirmButton" text="Confirmar (Enter)" onAction="#handleConfirm"/>
+            </HBox>
+        </VBox>
     </bottom>
 </BorderPane>

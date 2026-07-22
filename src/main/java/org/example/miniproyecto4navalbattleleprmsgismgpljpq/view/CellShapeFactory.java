@@ -16,7 +16,7 @@ import javafx.scene.shape.*;
  */
 public final class CellShapeFactory {
 
-    private static final int CELL_SIZE = 32;
+    public static final int CELL_SIZE = 32;
 
     private CellShapeFactory() {
     }
