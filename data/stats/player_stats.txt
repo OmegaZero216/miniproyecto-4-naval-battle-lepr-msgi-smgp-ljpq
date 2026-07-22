@@ -1,0 +1,3 @@
+nickname=Cadete
+sunkShips=0
+shotsFired=1
