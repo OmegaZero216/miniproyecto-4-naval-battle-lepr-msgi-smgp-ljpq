@@ -1,0 +1,27 @@
+.status-bar {
+    -fx-background-color: #2c3e50;
+}
+
+.phase-label, .turn-label, .debug-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.board-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.game-over-overlay {
+    -fx-background-color: rgba(0,0,0,0.6);
+}
+
+.game-over-label {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+}
+
+.hint-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #34495e;
+}
