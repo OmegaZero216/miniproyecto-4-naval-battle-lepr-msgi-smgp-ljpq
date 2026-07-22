@@ -5,6 +5,9 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Coordinate;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Ship;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.CellState;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state.GameState;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state.GameOverState;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state.MachineTurnState;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state.PlayerTurnState;
 
 /**
  * Orchestrates a full game: owns both boards, the current game state
@@ -26,6 +29,12 @@ public class GameService {
         this.playerBoard = playerBoard;
         this.machineBoard = machineBoard;
         this.currentState = new PlayerTurnState();
+    }
+
+    public GameService(Board playerBoard, Board machineBoard, GameState restoredState) {
+        this.playerBoard = playerBoard;
+        this.machineBoard = machineBoard;
+        this.currentState = restoredState;
     }
 
     /**
@@ -56,9 +65,9 @@ public class GameService {
         }
 
         if (machineBoard.isFleetSunk()) {
-            currentState = new org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state.GameOverState();
+            currentState = new GameOverState();
         } else if (!hit) {
-            currentState = new org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state.MachineTurnState();
+            currentState = new MachineTurnState();
         }
         // Si "hit" es true y la flota no está hundida, el turno CONTINÚA
         // (regla del enunciado: tocado/hundido → sigue disparando), por

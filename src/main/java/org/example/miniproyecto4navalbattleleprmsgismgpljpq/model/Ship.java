@@ -3,6 +3,8 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.model;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.Orientation;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.ShipType;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,8 +20,11 @@ import java.util.List;
  * for its type) from ever existing.
  * <p>
  * Satisfies HU1 (place ships): a Ship is the core object HU1 manipulates.
+ * Implements {@link Serializable}
  */
-public class Ship {
+public class Ship implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final ShipType type;
     private final Orientation orientation;

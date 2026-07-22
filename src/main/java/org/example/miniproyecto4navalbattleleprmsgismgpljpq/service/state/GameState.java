@@ -3,6 +3,8 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Coordinate;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 
+import java.io.Serializable;
+
 /**
  * State pattern: defines what actions are valid during a given game phase.
  * <p>
@@ -12,7 +14,7 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
  * class, never modifying existing state classes or GameService's core
  * logic.
  */
-public interface GameState {
+public interface GameState extends Serializable {
 
     /**
      * Handles a shot attempt during this phase.
