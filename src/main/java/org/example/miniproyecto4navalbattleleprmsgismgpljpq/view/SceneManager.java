@@ -5,6 +5,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.config.ViewType;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.GameController;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.PreparationController;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.ResultsController;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.TitleController;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.GameResult;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 
 import java.io.IOException;
 

@@ -6,10 +6,10 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.config;
  * across the codebase (rubric point 14).
  */
 public enum ViewType {
-    TITLE("/com/university/battleship/fxml/title-view.fxml", "Battleship"),
-    PREPARATION("/com/university/battleship/fxml/preparation-view.fxml", "Battleship - Prepara tu flota"),
-    GAME("/com/university/battleship/fxml/game-view.fxml", "Battleship - Combate"),
-    RESULTS("/com/university/battleship/fxml/results-view.fxml", "Battleship - Resultados");
+    TITLE("/org/example/miniproyecto4navalbattleleprmsgismgpljpq/fxml/title-view.fxml", "Battleship"),
+    PREPARATION("/org/example/miniproyecto4navalbattleleprmsgismgpljpq/fxml/preparation-view.fxml", "Battleship - Prepara tu flota"),
+    GAME("/org/example/miniproyecto4navalbattleleprmsgismgpljpq/fxml/game-view.fxml", "Battleship - Combate"),
+    RESULTS("/org/example/miniproyecto4navalbattleleprmsgismgpljpq/fxml/results-view.fxml", "Battleship - Resultados");
 
     private final String fxmlPath;
     private final String windowTitle;
