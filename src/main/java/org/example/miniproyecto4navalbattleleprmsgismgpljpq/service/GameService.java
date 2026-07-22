@@ -5,6 +5,7 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Coordinate;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Ship;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.CellState;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state.GameState;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state.PlayerTurnState;
 
 /**
  * Orchestrates a full game: owns both boards, the current game state

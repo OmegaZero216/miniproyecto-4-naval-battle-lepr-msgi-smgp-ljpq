@@ -1,6 +1,7 @@
 package org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.state;
 
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Coordinate;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 
 /**
  * Behavior while it is the human player's turn: shots are allowed and

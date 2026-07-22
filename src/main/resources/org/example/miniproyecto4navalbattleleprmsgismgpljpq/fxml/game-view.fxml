@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.GameController"
+            stylesheets="@game-style.css">
+
+    <!-- TOP: barra de estado — heurística de Nielsen "Visibilidad del estado del sistema" -->
+    <top>
+        <HBox fx:id="statusBar" spacing="15" alignment="CENTER_LEFT" styleClass="status-bar">
+            <padding><Insets top="8" right="15" bottom="8" left="15"/></padding>
+            <Label fx:id="phaseLabel" text="Fase: Colocando barcos" styleClass="phase-label"/>
+            <Label fx:id="turnLabel" text="Turno: Jugador" styleClass="turn-label"/>
+            <Label fx:id="debugModeLabel" text="" styleClass="debug-label"/>
+        </HBox>
+    </top>
+
+    <!-- CENTER: los dos tableros lado a lado -->
+    <center>
+        <HBox spacing="30" alignment="CENTER" styleClass="boards-container">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+            <!-- Tablero del jugador -->
+            <VBox alignment="CENTER" spacing="10">
+                <Label text="Tu flota" styleClass="board-title"/>
+                <StackPane fx:id="playerBoardContainer">
+                    <GridPane fx:id="playerGrid" styleClass="board-grid"/>
+                </StackPane>
+            </VBox>
+
+            <!-- Tablero de la máquina -->
+            <VBox alignment="CENTER" spacing="10">
+                <Label text="Tablero enemigo" styleClass="board-title"/>
+                <StackPane fx:id="machineBoardContainer">
+                    <GridPane fx:id="machineGrid" styleClass="board-grid"/>
+                    <!-- Overlay de fin de juego, oculto por defecto -->
+                    <AnchorPane fx:id="gameOverOverlay" visible="false" styleClass="game-over-overlay">
+                        <Label fx:id="gameOverLabel" text="¡Victoria!"
+                               AnchorPane.topAnchor="80" AnchorPane.leftAnchor="60"
+                               styleClass="game-over-label"/>
+                    </AnchorPane>
+                </StackPane>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!-- BOTTOM: acciones y ayuda de teclado -->
+    <bottom>
+        <VBox spacing="5" alignment="CENTER" styleClass="bottom-panel">
+            <padding><Insets top="10" bottom="10"/></padding>
+            <HBox spacing="12" alignment="CENTER">
+                <Button fx:id="rotateButton" text="Rotar (R)"/>
+                <Button fx:id="confirmButton" text="Confirmar (Enter)"/>
+                <Button fx:id="cancelButton" text="Cancelar (Esc)"/>
+                <Button fx:id="saveButton" text="Guardar (Ctrl+S)"/>
+                <Button fx:id="loadButton" text="Cargar (Ctrl+L)"/>
+                <Button fx:id="debugButton" text="Modo Debug"/>
+            </HBox>
+            <Label fx:id="hintLabel" text="Coloca tu Portaaviones (4 casillas)" styleClass="hint-label"/>
+        </VBox>
+    </bottom>
+</BorderPane>
