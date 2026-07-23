@@ -1,0 +1,100 @@
+package org.example.miniproyecto4navalbattleleprmsgismgpljpq.view;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.config.ViewType;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.GameController;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.PreparationController;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.ResultsController;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.TitleController;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.GameResult;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
+
+import java.io.IOException;
+
+/**
+ * Owns the single Stage and swaps its Scene content between screens.
+ * <p>
+ * This is the ONLY class in the project allowed to call FXMLLoader for
+ * navigation purposes. Every Controller that needs to move to another
+ * screen receives a SceneManager reference via setter injection (manual
+ * DI, consistent with the rest of the project — no Singleton), instead
+ * of instantiating its own FXMLLoader. This keeps navigation logic out
+ * of Controllers entirely, the same architectural boundary we've kept
+ * since Stage 1 for game logic.
+ * <p>
+ * Data that must travel between screens (a built GameService, a final
+ * GameResult) is passed explicitly through typed navigateTo* methods —
+ * never through static/global state, which would reintroduce the
+ * Singleton problem we're avoiding.
+ */
+public class SceneManager {
+
+    private final Stage stage;
+    private boolean firstShow = true;
+
+    public SceneManager(Stage stage) {
+        this.stage = stage;
+    }
+
+    public void navigateToTitle() {
+        TitleController controller = (TitleController) loadAndShow(ViewType.TITLE);
+        controller.setSceneManager(this);
+    }
+
+    public void navigateToPreparation() {
+        PreparationController controller = (PreparationController) loadAndShow(ViewType.PREPARATION);
+        controller.setSceneManager(this);
+    }
+
+    public void navigateToGame(GameService gameService) {
+        GameController controller = (GameController) loadAndShow(ViewType.GAME);
+        controller.setSceneManager(this);
+        controller.setGameService(gameService);
+    }
+
+    public void navigateToResults(GameResult result) {
+        ResultsController controller = (ResultsController) loadAndShow(ViewType.RESULTS);
+        controller.setSceneManager(this);
+        controller.setResult(result);
+    }
+
+    /**
+     * Loads the given view's FXML, installs it as the Stage's Scene,
+     * and returns its Controller so the caller can inject dependencies
+     * specific to that screen.
+     */
+    private Object loadAndShow(ViewType viewType) {
+        try {
+            // Si el controller saliente es un GameController, lo apagamos
+            // limpiamente antes de reemplazarlo.
+            if (stage.getScene() != null) {
+                Object previousController = stage.getScene().getUserData();
+                if (previousController instanceof GameController gc) {
+                    gc.shutdown();
+                }
+            }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(viewType.getFxmlPath()));
+            Parent root = loader.load();
+
+            double width = (stage.getScene() != null) ? stage.getScene().getWidth() : 900;
+            double height = (stage.getScene() != null) ? stage.getScene().getHeight() : 600;
+
+            stage.setScene(new Scene(root, width, height));
+            stage.getScene().setUserData(loader.getController());
+            stage.setTitle(viewType.getWindowTitle());
+
+            if (firstShow) {
+                stage.centerOnScreen();
+                firstShow = false;
+            }
+
+            stage.show();
+            return loader.getController();
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not load view: " + viewType, e);
+        }
+    }
+}
