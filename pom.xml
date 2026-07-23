@@ -57,6 +57,18 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <show>private</show>
+                    <doclint>none</doclint>
+                    <additionalOptions>-Xdoclint:none</additionalOptions>
+                    <doctitle>Battleship — Javadoc del Proyecto</doctitle>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
