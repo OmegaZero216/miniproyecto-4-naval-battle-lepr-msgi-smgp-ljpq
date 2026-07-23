@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.SceneManager;
+import javafx.scene.control.Label;
 
 /**
  * Controller for the title screen: Start (new game) and Load (saved game).
@@ -14,6 +15,7 @@ public class TitleController {
 
     @FXML private Button startButton;
     @FXML private Button loadButton;
+    @FXML private Label titleHintLabel;
 
     private SceneManager sceneManager;
 
@@ -34,9 +36,7 @@ public class TitleController {
             sceneManager.navigateToGame(restored);
         } catch (org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.GamePersistenceException
                  | org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.SaveNotFoundException e) {
-            // TODO Etapa GUI final: mostrar un Label de error en Title
-            // en vez de solo loguear — placeholder honesto por ahora.
-            System.err.println("No se pudo cargar: " + e.getMessage());
+            titleHintLabel.setText("No hay partida guardada para cargar.");
         }
     }
 }

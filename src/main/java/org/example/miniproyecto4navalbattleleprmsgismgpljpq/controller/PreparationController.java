@@ -25,6 +25,8 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.RandomFleetP
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.CellShapeFactory;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.SceneManager;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.ShipPaletteItem;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.BoardHeaderFactory;
+
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -179,8 +181,8 @@ public class PreparationController {
      */
     private Coordinate sceneToBoardCoordinate(double sceneX, double sceneY) {
         var local = placementGrid.sceneToLocal(sceneX, sceneY);
-        int col = (int) (local.getX() / CellShapeFactory.CELL_SIZE);
-        int row = (int) (local.getY() / CellShapeFactory.CELL_SIZE);
+        int col = (int) (local.getX() / CellShapeFactory.CELL_SIZE) - 1;
+        int row = (int) (local.getY() / CellShapeFactory.CELL_SIZE) - 1;
         if (row < 0 || row >= 10 || col < 0 || col >= 10) {
             return null;
         }
@@ -227,7 +229,7 @@ public class PreparationController {
             Rectangle highlight = new Rectangle(CellShapeFactory.CELL_SIZE, CellShapeFactory.CELL_SIZE);
             highlight.setFill(color);
             highlight.setMouseTransparent(true);
-            placementGrid.add(highlight, coordinate.column(), coordinate.row());
+            placementGrid.add(highlight, coordinate.column() + 1, coordinate.row() + 1);
         }
     }
 
@@ -238,13 +240,14 @@ public class PreparationController {
 
     private void renderGrid() {
         placementGrid.getChildren().clear();
+        BoardHeaderFactory.addHeaders(placementGrid);
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 Coordinate coordinate = new Coordinate(row, col);
                 Group shape = CellShapeFactory.createShapeFor(
                         playerBoard.getCell(coordinate).getState());
                 attachDropTarget(shape, coordinate);
-                placementGrid.add(shape, col, row);
+                placementGrid.add(shape, col + 1, row + 1);
             }
         }
     }
@@ -308,7 +311,7 @@ public class PreparationController {
         for (Coordinate coordinate : coordinates) {
             Group updated = CellShapeFactory.createShapeFor(CellState.SHIP);
             updated.setOnMouseClicked(e -> { /* ya ocupada, sin acción */ });
-            placementGrid.add(updated, coordinate.column(), coordinate.row());
+            placementGrid.add(updated, coordinate.column() + 1, coordinate.row() + 1);
         }
     }
 

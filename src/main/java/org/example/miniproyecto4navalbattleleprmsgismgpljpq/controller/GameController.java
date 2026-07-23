@@ -21,6 +21,9 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.ai.AIService;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.CellShapeFactory;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.SceneManager;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.BoardHeaderFactory;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.Ship;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -136,6 +139,14 @@ public class GameController {
             boolean hit = gameService.resolveMachineShot(coordinate);
             aiService.registerShotOutcome(coordinate, hit);
             refreshPlayerCell(coordinate);
+
+            Ship ship = findShipAt(gameService.getPlayerBoard(), coordinate);
+            if (ship != null && ship.isSunk()) {
+                for (Coordinate shipCoordinate : ship.getOccupiedCoordinates()) {
+                    refreshPlayerCell(shipCoordinate);
+                }
+            }
+
             checkGameOver();
             autoSave();
             // onGameStateChanged ya fue llamado dentro de resolveMachineShot
@@ -163,6 +174,7 @@ public class GameController {
     private void renderMachineBoard(Board board) {
         machineGrid.getChildren().clear();
         machineCellNodes.clear();
+        BoardHeaderFactory.addHeaders(machineGrid);
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 Coordinate coordinate = new Coordinate(row, col);
@@ -170,19 +182,20 @@ public class GameController {
                 Group shape = CellShapeFactory.createShapeFor(visible);
                 attachMachineCellEvents(shape, coordinate);
                 machineCellNodes.put(coordinate, shape);
-                machineGrid.add(shape, col, row);
+                machineGrid.add(shape, col + 1, row + 1);
             }
         }
     }
 
     private void renderPlayerBoard(Board board) {
         playerGrid.getChildren().clear();
+        BoardHeaderFactory.addHeaders(playerGrid);
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 Coordinate coordinate = new Coordinate(row, col);
                 Group shape = CellShapeFactory.createShapeFor(
                         board.getCell(coordinate).getState());
-                playerGrid.add(shape, col, row);
+                playerGrid.add(shape, col + 1, row + 1);
             }
         }
     }
@@ -191,8 +204,9 @@ public class GameController {
         Group updated = CellShapeFactory.createShapeFor(
                 gameService.getPlayerBoard().getCell(coordinate).getState());
         playerGrid.getChildren().removeIf(node ->
-                GridPane.getRowIndex(node) == coordinate.row() && GridPane.getColumnIndex(node) == coordinate.column());
-        playerGrid.add(updated, coordinate.column(), coordinate.row());
+                GridPane.getRowIndex(node) == coordinate.row() + 1
+                        && GridPane.getColumnIndex(node) == coordinate.column() + 1);
+        playerGrid.add(updated, coordinate.column() + 1, coordinate.row() + 1);
     }
 
     private void attachMachineCellEvents(Group shape, Coordinate coordinate) {
@@ -207,6 +221,14 @@ public class GameController {
         try {
             gameService.fireAt(coordinate);
             refreshMachineCell(coordinate);
+
+            Ship ship = findShipAt(gameService.getMachineBoard(), coordinate);
+            if (ship != null && ship.isSunk()) {
+                for (Coordinate shipCoordinate : ship.getOccupiedCoordinates()) {
+                    refreshMachineCell(shipCoordinate);
+                }
+            }
+
             updateStatusLabels();
             checkGameOver();
             autoSave(); // Guardado automático tras cada movimiento (requisito explícito).
@@ -228,6 +250,15 @@ public class GameController {
         } catch (GamePersistenceException e) {
             hintLabel.setText("No se pudo guardar automáticamente: " + e.getMessage());
         }
+    }
+
+    private Ship findShipAt(Board board, Coordinate coordinate) {
+        for (Ship ship : board.getShips().values()) {
+            if (ship.getOccupiedCoordinates().contains(coordinate)) {
+                return ship;
+            }
+        }
+        return null;
     }
 
     private void refreshMachineCell(Coordinate coordinate) {

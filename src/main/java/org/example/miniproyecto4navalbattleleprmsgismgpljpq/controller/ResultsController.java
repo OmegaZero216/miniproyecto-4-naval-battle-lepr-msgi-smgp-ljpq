@@ -21,8 +21,10 @@ public class ResultsController {
     }
 
     public void setResult(GameResult result) {
-        outcomeLabel.setText(result.playerWon() ? "¡Victoria!" : "Derrota");
-        statsLabel.setText("Disparos: " + result.shotsFired());
+        outcomeLabel.setText(result.playerWon() ? "¡VICTORIA!" : "DERROTA");
+        outcomeLabel.getStyleClass().removeAll("victory", "defeat");
+        outcomeLabel.getStyleClass().add(result.playerWon() ? "victory" : "defeat");
+        statsLabel.setText("Disparos realizados: " + result.shotsFired());
     }
 
     @FXML
