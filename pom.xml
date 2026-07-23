@@ -23,14 +23,12 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>21.0.6</version>
-            <classifier>win</classifier>
         </dependency>
         <!-- JavaFX: soporte para FXML + Scene Builder -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>21.0.6</version>
-            <classifier>win</classifier>
         </dependency>
 
         <!-- JUnit 5 para pruebas unitarias (punto 9 de la rúbrica) -->
