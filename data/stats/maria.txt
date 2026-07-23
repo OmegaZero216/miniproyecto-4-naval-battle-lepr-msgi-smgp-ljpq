@@ -1,0 +1,5 @@
+nickname=maria
+gamesWon=1
+gamesLost=0
+totalShotsFired=68
+totalShipsSunkByPlayer=10

@@ -1,0 +1,5 @@
+nickname=Sara
+gamesWon=1
+gamesLost=0
+totalShotsFired=26
+totalShipsSunkByPlayer=10

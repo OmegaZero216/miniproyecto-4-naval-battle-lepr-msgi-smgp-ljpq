@@ -2,16 +2,19 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.model;
 
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.CellState;
 
+import java.io.Serializable;
+
 /**
  * Represents a single cell of the 10x10 board.
  * Holds only data and simple state transitions — no game rules
  * (those belong to the Service layer), keeping this class cohesive
  * and easy to unit test in isolation (BoardTest, in a later stage).
  */
-public class Cell {
+public class Cell implements Serializable {
 
     private final Coordinate coordinate;
     private CellState state;
+    private static final long serialVersionUID = 1L;
 
     public Cell(Coordinate coordinate) {
         this.coordinate = coordinate;
