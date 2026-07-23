@@ -3,6 +3,7 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.model;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.Orientation;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.ShipType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,12 +20,13 @@ import java.util.List;
  * <p>
  * Satisfies HU1 (place ships): a Ship is the core object HU1 manipulates.
  */
-public class Ship {
+public class Ship implements Serializable {
 
     private final ShipType type;
     private final Orientation orientation;
     private final List<Coordinate> occupiedCoordinates;
     private final List<Coordinate> hitCoordinates = new ArrayList<>();
+    private static final long serialVersionUID = 1L;
 
     private Ship(ShipBuilder builder) {
         this.type = builder.type;

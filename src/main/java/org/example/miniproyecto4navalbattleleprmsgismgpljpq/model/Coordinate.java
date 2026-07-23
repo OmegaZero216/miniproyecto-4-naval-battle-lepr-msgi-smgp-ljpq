@@ -1,5 +1,7 @@
 package org.example.miniproyecto4navalbattleleprmsgismgpljpq.model;
 
+import java.io.Serializable;
+
 /**
  * Immutable representation of a board position (row, column).
  * Implemented as a record (Java 17 feature) because a coordinate
@@ -10,7 +12,7 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.model;
  * {@code HashSet} to track shots already fired, so their hashCode
  * must never change after creation.
  */
-public record Coordinate(int row, int column) {
+public record Coordinate(int row, int column) implements Serializable {
 
     public Coordinate {
         if (row < 0 || row >= 10 || column < 0 || column >= 10) {

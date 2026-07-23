@@ -2,6 +2,7 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.SceneManager;
 
 /**
@@ -27,7 +28,15 @@ public class TitleController {
 
     @FXML
     private void handleLoad() {
-        // TODO Etapa de persistencia: cargar partida guardada vía LoadManager
-        // y navegar directo a GAME con el GameService reconstruido.
+        try {
+            var data = new org.example.miniproyecto4navalbattleleprmsgismgpljpq.repository.LoadManager().load();
+            GameService restored = GameService.fromSnapshot(data);
+            sceneManager.navigateToGame(restored);
+        } catch (org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.GamePersistenceException
+                 | org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.SaveNotFoundException e) {
+            // TODO Etapa GUI final: mostrar un Label de error en Title
+            // en vez de solo loguear — placeholder honesto por ahora.
+            System.err.println("No se pudo cargar: " + e.getMessage());
+        }
     }
 }

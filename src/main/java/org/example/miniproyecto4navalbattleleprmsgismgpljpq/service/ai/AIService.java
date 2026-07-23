@@ -26,38 +26,35 @@ public class AIService {
     private final TargetingStrategy targetingStrategy = new TargetingStrategy();
 
     /**
-     * Triggers the machine's shot asynchronously.
-     *
-     * @param playerBoard the human player's board (the machine's target)
-     * @param onShotResolved callback invoked on the JavaFX thread once the
-     *        shot outcome is known, so the Controller can update the view
+     * Selects and reports the machine's next shot asynchronously. Unlike
+     * the earlier version, AIService no longer mutates the board itself
+     * — GameService.resolveMachineShot is the single source of truth for
+     * that. AIService's job is purely strategic: pick a coordinate, and
+     * later learn from the outcome via registerShotOutcome.
      */
-    public void takeShot(Board playerBoard, ShotResultCallback onShotResolved) {
+    public void takeShot(Board enemyBoard, ShotSelectedCallback callback) {
         aiExecutor.submit(() -> {
             simulateThinkingDelay();
-
             Coordinate coordinate = targetingStrategy.hasTargets()
-                    ? targetingStrategy.selectNextShot(playerBoard)
-                    : randomStrategy.selectNextShot(playerBoard);
-
+                    ? targetingStrategy.selectNextShot(enemyBoard)
+                    : randomStrategy.selectNextShot(enemyBoard);
             if (coordinate == null) {
-                coordinate = randomStrategy.selectNextShot(playerBoard);
+                coordinate = randomStrategy.selectNextShot(enemyBoard);
             }
-
-            playerBoard.registerShot(coordinate);
-            boolean hit = playerBoard.getCell(coordinate).isOccupied();
-            playerBoard.getCell(coordinate).setState(hit ? CellState.HIT : CellState.MISS);
-
-            if (hit) {
-                targetingStrategy.enqueueAdjacent(coordinate);
-            }
-
             Coordinate finalCoordinate = coordinate;
-            // Bridge back to the JavaFX Application Thread: this is the
-            // synchronization mechanism that avoids race conditions
-            // between the AI's background thread and the UI thread.
-            Platform.runLater(() -> onShotResolved.onResolved(finalCoordinate, hit));
+            javafx.application.Platform.runLater(() -> callback.onShotSelected(finalCoordinate));
         });
+    }
+
+    /** Feeds back the outcome so TargetingStrategy can queue adjacent cells on a hit. */
+    public void registerShotOutcome(Coordinate coordinate, boolean hit) {
+        if (hit) {
+            targetingStrategy.enqueueAdjacent(coordinate);
+        }
+    }
+
+    public interface ShotSelectedCallback {
+        void onShotSelected(Coordinate coordinate);
     }
 
     /** Simulates a brief "thinking" pause so the AI doesn't fire instantly. */
@@ -69,10 +66,6 @@ public class AIService {
         }
     }
 
-    /** Functional callback interface — an example of the "múltiples interfaces" requirement (rubric point 2). */
-    public interface ShotResultCallback {
-        void onResolved(Coordinate coordinate, boolean hit);
-    }
 
     public void shutdown() {
         aiExecutor.shutdown();

@@ -67,9 +67,18 @@ public class SceneManager {
      */
     private Object loadAndShow(ViewType viewType) {
         try {
+            // Si el controller saliente es un GameController, lo apagamos
+            // limpiamente antes de reemplazarlo.
+            if (stage.getScene() != null) {
+                Object previousController = stage.getScene().getUserData();
+                if (previousController instanceof GameController gc) {
+                    gc.shutdown();
+                }
+            }
             FXMLLoader loader = new FXMLLoader(getClass().getResource(viewType.getFxmlPath()));
             Parent root = loader.load();
             stage.setScene(new Scene(root));
+            stage.getScene().setUserData(loader.getController());
             stage.setTitle(viewType.getWindowTitle());
             stage.show();
             return loader.getController();

@@ -4,6 +4,7 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.CellStat
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.config.GameConfig;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.ShipType;
 
+import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,12 +31,13 @@ import java.util.UUID;
  * This class only stores and exposes state; it does not decide game rules
  * (e.g. whether a shot is legal) — that belongs to the Service layer.
  */
-public class Board {
+public class Board implements Serializable {
 
     private final Cell[][] grid;
     private final Map<String, Ship> ships = new HashMap<>();
     private final Set<Coordinate> firedShots = new HashSet<>();
     private final Map<ShipType, Integer> remainingShipsByType = new EnumMap<>(ShipType.class);
+    private static final long serialVersionUID = 1L;
 
     public Board() {
         this.grid = new Cell[GameConfig.BOARD_SIZE][GameConfig.BOARD_SIZE];

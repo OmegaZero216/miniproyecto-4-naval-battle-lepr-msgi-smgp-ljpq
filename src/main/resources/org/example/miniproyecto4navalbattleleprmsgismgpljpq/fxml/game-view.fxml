@@ -53,14 +53,10 @@
         <VBox spacing="5" alignment="CENTER" styleClass="bottom-panel">
             <padding><Insets top="10" bottom="10"/></padding>
             <HBox spacing="12" alignment="CENTER">
-                <Button fx:id="rotateButton" text="Rotar (R)"/>
-                <Button fx:id="confirmButton" text="Confirmar (Enter)"/>
-                <Button fx:id="cancelButton" text="Cancelar (Esc)"/>
-                <Button fx:id="saveButton" text="Guardar (Ctrl+S)"/>
-                <Button fx:id="loadButton" text="Cargar (Ctrl+L)"/>
+                <Button fx:id="saveButton" text="Guardar (Ctrl+S)" onAction="#handleSaveButton"/>
                 <Button fx:id="debugButton" text="Modo Debug"/>
             </HBox>
-            <Label fx:id="hintLabel" text="Coloca tu Portaaviones (4 casillas)" styleClass="hint-label"/>
+            <Label fx:id="hintLabel" text="" styleClass="hint-label"/>
         </VBox>
     </bottom>
 </BorderPane>
