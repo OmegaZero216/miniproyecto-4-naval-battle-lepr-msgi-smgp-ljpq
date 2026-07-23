@@ -7,12 +7,14 @@
 
 <!-- title-view.fxml -->
 
+<?import javafx.scene.control.TextField?>
 <StackPane styleClass="title-screen" stylesheets="@game-style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.TitleController">
     <VBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="25.0" StackPane.alignment="CENTER">
         <Label styleClass="game-title" text="BATALLA NAVAL" />
       <Label style="-fx-text-fill: #d9f3fb; -fx-font-size: 15px; -fx-font-style: italic;" styleClass="subtitle" text="Hunde la flota enemiga antes de que hundan la tuya" />
         <TextField fx:id="nicknameField" maxWidth="220"/>
-        <Label text="Ingresa tu nickname" fx:id="nicknameLabel" styleClass="nickname-label"/>
+        <Label text="Ingresa tu nickname" fx:id="nicknameLabel" style="-fx-text-fill: #d9f3fb; -fx-font-style: italic;" styleClass="nickname-label"/>
+        <Label fx:id="errorLabel" text=""/>
       <VBox alignment="CENTER" spacing="12.0">
          <children>
               <Button fx:id="startButton" onAction="#handleStart" text="Nueva Partida" />
