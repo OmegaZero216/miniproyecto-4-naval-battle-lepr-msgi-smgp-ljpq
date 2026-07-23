@@ -9,6 +9,7 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.Save
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.repository.LoadManager;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.SceneManager;
+import javafx.scene.control.Label;
 
 /**
  * Controller for the title screen: Start (new game) and Load (saved game).
@@ -21,6 +22,7 @@ public class TitleController {
     @FXML private Label errorLabel;
     @FXML private Button startButton;
     @FXML private Button loadButton;
+    @FXML private Label titleHintLabel;
 
     private SceneManager sceneManager;
 

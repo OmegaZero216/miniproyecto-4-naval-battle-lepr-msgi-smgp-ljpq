@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+
 <?import javafx.geometry.Insets?>
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.PreparationController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" stylesheets="@game-style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.PreparationController">
 
     <center>
         <StackPane>
-            <HBox spacing="30" alignment="CENTER">
-                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
-                <VBox spacing="10" alignment="TOP_CENTER" styleClass="fleet-panel">
-                    <Label text="Tu flota" styleClass="board-title"/>
-                    <VBox fx:id="fleetPanel" spacing="12"/>
+            <HBox alignment="CENTER" spacing="30">
+                <padding><Insets bottom="20" left="20" right="20" top="20" /></padding>
+                <VBox alignment="TOP_CENTER" spacing="10" styleClass="fleet-panel">
+                    <Label styleClass="board-title" text="Tu flota" />
+                    <VBox fx:id="fleetPanel" spacing="12" />
                 </VBox>
                 <VBox alignment="CENTER" spacing="10">
-                    <Label text="Tu tablero" styleClass="board-title"/>
-                    <GridPane fx:id="placementGrid"/>
+                    <Label styleClass="board-title" text="Tu tablero" />
+                    <GridPane fx:id="placementGrid" />
                 </VBox>
             </HBox>
             <!-- Capa flotante para el "fantasma" del barco arrastrado. mouseTransparent
                  para que los clicks/drags pasen a través hacia el tablero de abajo. -->
-            <Pane fx:id="dragOverlay" mouseTransparent="true" pickOnBounds="false"/>
+            <Pane fx:id="dragOverlay" mouseTransparent="true" pickOnBounds="false" />
         </StackPane>
     </center>
 
     <bottom>
         <VBox alignment="CENTER" spacing="8">
-            <Label fx:id="hintLabel" styleClass="hint-label"/>
+            <Label fx:id="hintLabel" styleClass="hint-label" />
             <HBox alignment="CENTER" spacing="10">
-                <Button fx:id="rotateButton" text="Rotar (R)" onAction="#handleRotate"/>
-                <Button fx:id="confirmButton" text="Confirmar (Enter)" onAction="#handleConfirm"/>
+                <Button fx:id="rotateButton" onAction="#handleRotate" text="Rotar (R)" />
+                <Button fx:id="confirmButton" onAction="#handleConfirm" text="Confirmar (Enter)" />
             </HBox>
         </VBox>
     </bottom>

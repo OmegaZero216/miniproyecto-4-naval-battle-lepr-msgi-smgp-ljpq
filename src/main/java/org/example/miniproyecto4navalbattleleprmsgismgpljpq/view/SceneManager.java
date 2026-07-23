@@ -38,6 +38,7 @@ public class SceneManager {
     private final Stage stage;
     private final StatsService statsService = new StatsService(new StatsRepository());
 
+    private boolean firstShow = true;
 
     public SceneManager(Stage stage) {
         this.stage = stage;
@@ -81,8 +82,18 @@ public class SceneManager {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(viewType.getFxmlPath()));
             Parent root = loader.load();
-            stage.setScene(new Scene(root));
+
+            double width = (stage.getScene() != null) ? stage.getScene().getWidth() : 900;
+            double height = (stage.getScene() != null) ? stage.getScene().getHeight() : 600;
+
+            stage.setScene(new Scene(root, width, height));
             stage.setTitle(viewType.getWindowTitle());
+
+            if (firstShow) {
+                stage.centerOnScreen();
+                firstShow = false;
+            }
+
             stage.show();
             return loader.getController();
         } catch (IOException e) {
