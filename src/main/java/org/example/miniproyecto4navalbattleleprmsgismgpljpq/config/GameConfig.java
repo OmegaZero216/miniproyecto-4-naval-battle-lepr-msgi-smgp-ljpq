@@ -20,7 +20,7 @@ public final class GameConfig {
     public static final int FRIGATE_COUNT = 4;
 
     public static final String SAVE_FILE_PATH = "data/saves/current_game.dat";
-    public static final String STATS_FILE_PATH = "data/stats/player_stats.txt";
+    public static final String STATS_DIR_PATH = "data/stats/";
 
     private GameConfig() {
         // Prevents instantiation — this class only holds constants.

@@ -2,6 +2,11 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.GamePersistenceException;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.SaveNotFoundException;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.repository.LoadManager;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.SceneManager;
 
@@ -12,6 +17,8 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.SceneManager;
  */
 public class TitleController {
 
+    @FXML private TextField nicknameField;
+    @FXML private Label errorLabel;
     @FXML private Button startButton;
     @FXML private Button loadButton;
 
@@ -23,20 +30,36 @@ public class TitleController {
 
     @FXML
     private void handleStart() {
-        sceneManager.navigateToPreparation();
+        String nickname = readValidNickname();
+        if (nickname == null) return;
+        sceneManager.navigateToPreparation(nickname);
     }
 
     @FXML
     private void handleLoad() {
+        String nickname = readValidNickname();
+        if (nickname == null) return;
         try {
-            var data = new org.example.miniproyecto4navalbattleleprmsgismgpljpq.repository.LoadManager().load();
+            var data = new LoadManager().load();
             GameService restored = GameService.fromSnapshot(data);
-            sceneManager.navigateToGame(restored);
-        } catch (org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.GamePersistenceException
-                 | org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.exception.SaveNotFoundException e) {
-            // TODO Etapa GUI final: mostrar un Label de error en Title
-            // en vez de solo loguear — placeholder honesto por ahora.
-            System.err.println("No se pudo cargar: " + e.getMessage());
+            sceneManager.navigateToGame(restored, nickname);
+        } catch (GamePersistenceException | SaveNotFoundException e) {
+            errorLabel.setText("No se pudo cargar: " + e.getMessage());
         }
+    }
+
+    /**
+     * Validates the nickname is non-blank before letting the player
+     * proceed — prevention of errors (Nielsen heuristic already
+     * documented in Stage 6) applied to stat-tracking: an empty
+     * nickname would otherwise silently corrupt/merge stats files.
+     */
+    private String readValidNickname() {
+        String nickname = nicknameField.getText() == null ? "" : nicknameField.getText().trim();
+        if (nickname.isEmpty()) {
+            errorLabel.setText("Por favor ingresa un nickname.");
+            return null;
+        }
+        return nickname;
     }
 }

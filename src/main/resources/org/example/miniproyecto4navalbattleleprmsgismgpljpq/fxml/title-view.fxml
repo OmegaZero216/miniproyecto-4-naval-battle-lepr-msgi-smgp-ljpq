@@ -5,8 +5,11 @@
 <StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
            fx:controller="org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.TitleController"
            styleClass="title-screen">
-    <VBox alignment="CENTER" spacing="20">
+    <VBox alignment="CENTER" spacing="15">
         <Label text="BATALLA NAVAL" styleClass="game-title"/>
+        <TextField fx:id="nicknameField" maxWidth="220"/>
+        <Label text="Ingresa tu nickname" fx:id="nicknameLabel" styleClass="nickname-label"/>
+        <Label fx:id="errorLabel" styleClass="hint-label"/>
         <Button fx:id="startButton" text="Nueva Partida" onAction="#handleStart"/>
         <Button fx:id="loadButton" text="Cargar Partida" onAction="#handleLoad"/>
     </VBox>

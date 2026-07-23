@@ -50,11 +50,16 @@ public class GameController {
     private final SaveManager saveManager = new SaveManager();
     private boolean debugMode = false;
     private final AIService aiService = new AIService();
-
+    private String nickname;
+    private int shotsFired = 0;
 
     // Referencia a los nodos renderizados por coordenada, para poder
     // actualizar solo la celda que cambió sin redibujar todo el tablero.
     private final Map<Coordinate, Group> machineCellNodes = new HashMap<>();
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     @FXML
     private void initialize() {
@@ -206,14 +211,15 @@ public class GameController {
     private void handleCellClicked(Coordinate coordinate) {
         try {
             gameService.fireAt(coordinate);
+            shotsFired++;
             refreshMachineCell(coordinate);
-            updateStatusLabels();
             checkGameOver();
-            autoSave(); // Guardado automático tras cada movimiento (requisito explícito).
+            autoSave();
         } catch (IllegalStateException e) {
             hintLabel.setText(e.getMessage());
         }
     }
+
 
     /**
      * Auto-saves after every resolved move, as explicitly required by
@@ -248,10 +254,20 @@ public class GameController {
 
     private void checkGameOver() {
         if (gameService.getMachineBoard().isFleetSunk()) {
-            GameResult result = new GameResult(true, /* shotsFired */ 0, 0, 0);
-            sceneManager.navigateToResults(result);
+            finishGame(true);
+        } else if (gameService.getPlayerBoard().isFleetSunk()) {
+            finishGame(false);
         }
-        // TODO: rama simétrica cuando gane la máquina (Etapa de IA/turnos completa)
+    }
+
+    private void finishGame(boolean playerWon) {
+        GameResult result = new GameResult(
+                playerWon,
+                shotsFired,
+                (int) gameService.getMachineBoard().getSunkShipCount(),
+                (int) gameService.getPlayerBoard().getSunkShipCount()
+        );
+        sceneManager.navigateToResults(result, nickname);
     }
 
     private void attachKeyboardShortcuts(javafx.scene.Scene scene) {

@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>miniproyecto4navalbattleleprmsgismgpljpq</artifactId>
+    <artifactId>miniproyecto-4-navalbattle-lepr-msgi-smgp-ljpq</artifactId>
     <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <name>miniproyecto-4-navalbattle-lepr-msgi-smgp-ljpq</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -22,13 +22,13 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21.0.6</version>
+            <version>17.0.14</version>
         </dependency>
         <!-- JavaFX: soporte para FXML + Scene Builder -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>21.0.6</version>
+            <version>17.0.14</version>
         </dependency>
 
         <!-- JUnit 5 para pruebas unitarias (punto 9 de la rúbrica) -->

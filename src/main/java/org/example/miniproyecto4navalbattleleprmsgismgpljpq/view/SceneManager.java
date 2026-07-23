@@ -10,7 +10,10 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.Preparati
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.ResultsController;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller.TitleController;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.GameResult;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.PlayerStats;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.repository.StatsRepository;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.GameService;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.service.StatsService;
 
 import java.io.IOException;
 
@@ -33,6 +36,8 @@ import java.io.IOException;
 public class SceneManager {
 
     private final Stage stage;
+    private final StatsService statsService = new StatsService(new StatsRepository());
+
 
     public SceneManager(Stage stage) {
         this.stage = stage;
@@ -43,21 +48,28 @@ public class SceneManager {
         controller.setSceneManager(this);
     }
 
-    public void navigateToPreparation() {
+    public void navigateToPreparation(String nickname) {
         PreparationController controller = (PreparationController) loadAndShow(ViewType.PREPARATION);
         controller.setSceneManager(this);
+        controller.setNickname(nickname);
     }
 
-    public void navigateToGame(GameService gameService) {
+    public void navigateToGame(GameService gameService, String nickname) {
         GameController controller = (GameController) loadAndShow(ViewType.GAME);
         controller.setSceneManager(this);
+        controller.setNickname(nickname);
         controller.setGameService(gameService);
     }
 
-    public void navigateToResults(GameResult result) {
+    public void navigateToResults(GameResult result, String nickname) {
+        PlayerStats updatedStats = statsService.recordGameResult(nickname, result);
         ResultsController controller = (ResultsController) loadAndShow(ViewType.RESULTS);
         controller.setSceneManager(this);
-        controller.setResult(result);
+        controller.setResult(result, updatedStats);
+    }
+
+    public StatsService getStatsService() {
+        return statsService;
     }
 
     /**
@@ -67,18 +79,9 @@ public class SceneManager {
      */
     private Object loadAndShow(ViewType viewType) {
         try {
-            // Si el controller saliente es un GameController, lo apagamos
-            // limpiamente antes de reemplazarlo.
-            if (stage.getScene() != null) {
-                Object previousController = stage.getScene().getUserData();
-                if (previousController instanceof GameController gc) {
-                    gc.shutdown();
-                }
-            }
             FXMLLoader loader = new FXMLLoader(getClass().getResource(viewType.getFxmlPath()));
             Parent root = loader.load();
             stage.setScene(new Scene(root));
-            stage.getScene().setUserData(loader.getController());
             stage.setTitle(viewType.getWindowTitle());
             stage.show();
             return loader.getController();

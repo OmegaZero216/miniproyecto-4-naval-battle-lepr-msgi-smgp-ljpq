@@ -13,4 +13,5 @@ module org.example.miniproyecto4navalbattleleprmsgismgpljpq {
     exports org.example.miniproyecto4navalbattleleprmsgismgpljpq.view;
     exports org.example.miniproyecto4navalbattleleprmsgismgpljpq.service;
     exports org.example.miniproyecto4navalbattleleprmsgismgpljpq.config;
+    exports org.example.miniproyecto4navalbattleleprmsgismgpljpq.repository;
 }

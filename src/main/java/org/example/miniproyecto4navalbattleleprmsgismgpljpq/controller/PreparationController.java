@@ -58,9 +58,13 @@ public class PreparationController {
     private List<Coordinate> lastPreviewCoordinates = new ArrayList<>();
     private double lastDragSceneX;
     private double lastDragSceneY;
+    private String nickname;
 
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
+    }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @FXML
@@ -334,13 +338,12 @@ public class PreparationController {
             hintLabel.setText("Aún faltan barcos por colocar: " + pendingShips.size());
             return;
         }
-
         Board machineBoard = new Board();
         PlacementService machinePlacementService = new PlacementService(machineBoard);
         new RandomFleetPlacementService(machinePlacementService).placeFleetRandomly(machineBoard);
 
         GameService gameService = new GameService(playerBoard, machineBoard);
-        sceneManager.navigateToGame(gameService);
+        sceneManager.navigateToGame(gameService, nickname);
     }
 
     private void updateHint() {

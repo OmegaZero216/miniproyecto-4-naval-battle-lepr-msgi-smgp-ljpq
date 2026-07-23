@@ -1,6 +1,7 @@
 package org.example.miniproyecto4navalbattleleprmsgismgpljpq.repository;
 
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.config.GameConfig;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.PlayerStats;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,47 +19,49 @@ import java.util.Map;
  */
 public class StatsRepository {
 
-    public void save(String nickname, int wins, int losses, int totalShipsSunk) {
-        Map<String, String> data = new HashMap<>();
-        data.put("nickname", nickname);
-        data.put("wins", String.valueOf(wins));
-        data.put("losses", String.valueOf(losses));
-        data.put("totalShipsSunk", String.valueOf(totalShipsSunk));
-
+    public void save(PlayerStats stats) {
         try {
-            Path path = Path.of(GameConfig.STATS_FILE_PATH);
-            Files.createDirectories(path.getParent());
+            Path dir = Path.of(GameConfig.STATS_DIR_PATH);
+            Files.createDirectories(dir);
+            Path path = dir.resolve(stats.getNickname() + ".txt");
             try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    writer.write(entry.getKey() + "=" + entry.getValue());
-                    writer.newLine();
-                }
+                writer.write("nickname=" + stats.getNickname()); writer.newLine();
+                writer.write("gamesWon=" + stats.getGamesWon()); writer.newLine();
+                writer.write("gamesLost=" + stats.getGamesLost()); writer.newLine();
+                writer.write("totalShotsFired=" + stats.getTotalShotsFired()); writer.newLine();
+                writer.write("totalShipsSunkByPlayer=" + stats.getTotalShipsSunkByPlayer()); writer.newLine();
             }
         } catch (IOException e) {
-            // Las estadísticas son informativas, no críticas para poder
-            // seguir jugando — por eso aquí solo registramos, no
-            // propagamos una excepción que interrumpiría la partida.
+            // Igual que antes: las estadísticas son informativas, no
+            // críticas para poder seguir jugando.
             System.err.println("Warning: could not save stats — " + e.getMessage());
         }
     }
 
-    public Map<String, String> load() {
-        Map<String, String> data = new HashMap<>();
-        Path path = Path.of(GameConfig.STATS_FILE_PATH);
+    /** Returns fresh (all-zero) stats if this nickname has never played before. */
+    public PlayerStats load(String nickname) {
+        Path path = Path.of(GameConfig.STATS_DIR_PATH, nickname + ".txt");
         if (!Files.exists(path)) {
-            return data;
+            return new PlayerStats(nickname);
         }
         try (BufferedReader reader = Files.newBufferedReader(path)) {
+            int won = 0, lost = 0, shots = 0, sunk = 0;
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("=", 2);
-                if (parts.length == 2) {
-                    data.put(parts[0], parts[1]);
+                if (parts.length != 2) continue;
+                switch (parts[0]) {
+                    case "gamesWon" -> won = Integer.parseInt(parts[1]);
+                    case "gamesLost" -> lost = Integer.parseInt(parts[1]);
+                    case "totalShotsFired" -> shots = Integer.parseInt(parts[1]);
+                    case "totalShipsSunkByPlayer" -> sunk = Integer.parseInt(parts[1]);
+                    default -> { }
                 }
             }
+            return new PlayerStats(nickname, won, lost, shots, sunk);
         } catch (IOException e) {
             System.err.println("Warning: could not read stats — " + e.getMessage());
+            return new PlayerStats(nickname);
         }
-        return data;
     }
 }

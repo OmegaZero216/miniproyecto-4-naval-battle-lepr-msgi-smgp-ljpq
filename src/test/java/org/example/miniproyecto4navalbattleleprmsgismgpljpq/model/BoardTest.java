@@ -3,6 +3,8 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.model;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.CellState;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.Orientation;
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.model.enums.ShipType;
+import org.example.miniproyecto4navalbattleleprmsgismgpljpq.util.TestShipFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,100 +17,78 @@ import static org.junit.jupiter.api.Assertions.*;
  * These tests ensure that the board maintains a consistent state
  * after each operation and correctly reflects the game rules.
  */
+@DisplayName("Board")
 class BoardTest {
 
+    private Board board;
+
+    @BeforeEach
+    void setUp() {
+        board = new Board();
+    }
+
     @Test
-    @DisplayName("Should place a ship and mark its cells as occupied")
-    void testPlaceShip() {
-        // given
-        Board board = new Board();
-        Ship ship = new Ship.ShipBuilder()
-                .ofType(ShipType.FRIGATE)
-                .withOrientation(Orientation.HORIZONTAL)
-                .addCoordinate(new Coordinate(0, 0))
-                .build();
+    @DisplayName("all cells start as EMPTY")
+    void allCellsStartEmpty() {
+        for (int row = 0; row < 10; row++) {
+            for (int col = 0; col < 10; col++) {
+                assertEquals(CellState.EMPTY, board.getCell(new Coordinate(row, col)).getState());
+            }
+        }
+    }
 
-        // when
-        board.placeShip(ship);
+    @Test
+    @DisplayName("placing a ship marks its cells as SHIP and indexes it")
+    void placingShipMarksCellsAndIndexesIt() {
+        Ship frigate = TestShipFactory.createShip(ShipType.FRIGATE, Orientation.HORIZONTAL, new Coordinate(0, 0));
+        board.placeShip(frigate);
 
-        // then
-        assertTrue(board.getCell(new Coordinate(0, 0)).isOccupied());
         assertEquals(CellState.SHIP, board.getCell(new Coordinate(0, 0)).getState());
+        assertEquals(1, board.getShips().size());
     }
 
     @Test
-    @DisplayName("Should register a hit and mark the ship as sunk when all cells are hit")
-    void testRegisterShotHit() {
-        // given
-        Board board = new Board();
-        Ship ship = new Ship.ShipBuilder()
-                .ofType(ShipType.FRIGATE)
-                .withOrientation(Orientation.HORIZONTAL)
-                .addCoordinate(new Coordinate(0, 0))
-                .build();
-        board.placeShip(ship);
+    @DisplayName("a coordinate is only reported as shot after registerShot is called")
+    void tracksFiredShots() {
+        Coordinate target = new Coordinate(3, 3);
+        assertFalse(board.hasShotAt(target));
 
-        // when
-        board.registerShot(new Coordinate(0, 0));
-        board.getCell(new Coordinate(0, 0)).setState(CellState.HIT);
-        ship.registerHit(new Coordinate(0, 0));
+        board.registerShot(target);
 
-        // then
-        assertTrue(ship.isSunk());
-        assertTrue(board.isFleetSunk());
+        assertTrue(board.hasShotAt(target));
     }
 
     @Test
-    @DisplayName("Should register a miss and mark the cell as MISS")
-    void testRegisterShotMiss() {
-        // given
-        Board board = new Board();
+    @DisplayName("isFleetSunk is false while any ship has unhit cells")
+    void fleetNotSunkWhileAnyShipAlive() {
+        Ship frigate = TestShipFactory.createShip(ShipType.FRIGATE, Orientation.HORIZONTAL, new Coordinate(0, 0));
+        board.placeShip(frigate);
 
-        // when
-        board.registerShot(new Coordinate(0, 0));
-        board.getCell(new Coordinate(0, 0)).setState(CellState.MISS);
-
-        // then
-        assertEquals(CellState.MISS, board.getCell(new Coordinate(0, 0)).getState());
-        assertTrue(board.hasShotAt(new Coordinate(0, 0)));
-    }
-
-    @Test
-    @DisplayName("Should detect fleet is not sunk until all ships are sunk")
-    void testFleetSunkWithMultipleShips() {
-        // given
-        Board board = new Board();
-        Ship ship1 = new Ship.ShipBuilder()
-                .ofType(ShipType.FRIGATE)
-                .withOrientation(Orientation.HORIZONTAL)
-                .addCoordinate(new Coordinate(0, 0))
-                .build();
-        Ship ship2 = new Ship.ShipBuilder()
-                .ofType(ShipType.DESTROYER)
-                .withOrientation(Orientation.VERTICAL)
-                .addCoordinate(new Coordinate(1, 0))
-                .addCoordinate(new Coordinate(2, 0))
-                .build();
-        board.placeShip(ship1);
-        board.placeShip(ship2);
-
-        // when – sink only ship1
-        board.registerShot(new Coordinate(0, 0));
-        board.getCell(new Coordinate(0, 0)).setState(CellState.HIT);
-        ship1.registerHit(new Coordinate(0, 0));
-
-        // then
         assertFalse(board.isFleetSunk());
+    }
 
-        // when – sink ship2
-        board.registerShot(new Coordinate(1, 0));
-        board.getCell(new Coordinate(1, 0)).setState(CellState.HIT);
-        ship2.registerHit(new Coordinate(1, 0));
-        board.registerShot(new Coordinate(2, 0));
-        board.getCell(new Coordinate(2, 0)).setState(CellState.HIT);
-        ship2.registerHit(new Coordinate(2, 0));
+    @Test
+    @DisplayName("isFleetSunk becomes true once every placed ship is sunk")
+    void fleetSunkWhenAllShipsSunk() {
+        Ship frigate = TestShipFactory.createShip(ShipType.FRIGATE, Orientation.HORIZONTAL, new Coordinate(0, 0));
+        board.placeShip(frigate);
 
-        // then
+        frigate.registerHit(new Coordinate(0, 0)); // Frigata: 1 sola celda.
+
         assertTrue(board.isFleetSunk());
+    }
+
+    @Test
+    @DisplayName("getSunkShipCount reflects only fully-sunk ships, not partially hit ones")
+    void sunkShipCountCountsOnlyFullySunkShips() {
+        Ship destroyer = TestShipFactory.createShip(ShipType.DESTROYER, Orientation.HORIZONTAL, new Coordinate(0, 0));
+        Ship frigate = TestShipFactory.createShip(ShipType.FRIGATE, Orientation.HORIZONTAL, new Coordinate(5, 5));
+        board.placeShip(destroyer);
+        board.placeShip(frigate);
+
+        destroyer.registerHit(new Coordinate(0, 0)); // Solo 1 de 2 celdas: no hundido.
+        frigate.registerHit(new Coordinate(5, 5));   // 1 de 1 celda: hundido.
+
+        assertEquals(1, board.getSunkShipCount());
     }
 }
