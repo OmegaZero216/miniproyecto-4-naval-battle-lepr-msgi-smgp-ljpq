@@ -74,6 +74,10 @@ public class PreparationController {
         playerBoard = new Board();
         placementService = new PlacementService(playerBoard);
         pendingShips = FleetFactory.generateFleetOrder();
+
+        rotateButton.setFocusTraversable(false);
+        confirmButton.setFocusTraversable(false);
+
         renderGrid();
         renderFleetPanel();
         updateHint();
@@ -325,6 +329,8 @@ public class PreparationController {
                 ? Orientation.VERTICAL : Orientation.HORIZONTAL;
         renderFleetPanel(); // Repinta los items pendientes en la nueva orientación.
         hintLabel.setText("Orientación: " + currentOrientation);
+
+        placementGrid.requestFocus();
     }
 
     private void handleCancelSelection() {
