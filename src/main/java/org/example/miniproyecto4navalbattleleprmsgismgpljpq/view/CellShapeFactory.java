@@ -24,15 +24,49 @@ public final class CellShapeFactory {
     }
 
     public static Group createShapeFor(CellState state) {
-        return switch (state) {
-            case EMPTY -> water();
-            case SHIP -> shipCell();
-            case MISS -> miss();
-            case HIT -> hit();
-            case SUNK -> sunk();
-        };
-    }
+        Group group = new Group();
+        Rectangle background = new Rectangle(CELL_SIZE, CELL_SIZE);
+        background.setStroke(Color.web("#2c3e50"));
+        background.setStrokeWidth(1);
 
+        switch (state) {
+            case EMPTY -> background.setFill(Color.web("#aed9e0"));
+            case SHIP -> {
+                background.setFill(Color.web("#aed9e0"));
+            }
+            case MISS -> {
+                background.setFill(Color.web("#aed9e0"));
+                Circle splash = new Circle(CELL_SIZE / 2.0, CELL_SIZE / 2.0, 5);
+                splash.setFill(Color.web("#2980b9"));
+                group.getChildren().addAll(background, splash);
+                return group;
+            }
+            case HIT -> {
+                background.setFill(Color.web("#e67e22"));
+                Line l1 = new Line(6, 6, CELL_SIZE - 6, CELL_SIZE - 6);
+                Line l2 = new Line(CELL_SIZE - 6, 6, 6, CELL_SIZE - 6);
+                l1.setStroke(Color.web("#c0392b"));
+                l2.setStroke(Color.web("#c0392b"));
+                l1.setStrokeWidth(3);
+                l2.setStrokeWidth(3);
+                group.getChildren().addAll(background, l1, l2);
+                return group;
+            }
+            case SUNK -> {
+                background.setFill(Color.web("#c0392b"));
+                Line l1 = new Line(6, 6, CELL_SIZE - 6, CELL_SIZE - 6);
+                Line l2 = new Line(CELL_SIZE - 6, 6, 6, CELL_SIZE - 6);
+                l1.setStroke(Color.web("#2c3e50"));
+                l2.setStroke(Color.web("#2c3e50"));
+                l1.setStrokeWidth(4);
+                l2.setStrokeWidth(4);
+                group.getChildren().addAll(background, l1, l2);
+                return group;
+            }
+        }
+        group.getChildren().add(background);
+        return group;
+    }
     private static Rectangle background(Color fill) {
         Rectangle bg = new Rectangle(CELL_SIZE, CELL_SIZE);
         bg.setFill(fill);

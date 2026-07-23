@@ -48,15 +48,29 @@ class GameServiceTest {
     }
 
     @Test
-    @DisplayName("firing at a ship registers a HIT and the player keeps their turn")
+    @DisplayName("hitting a ship without sinking it keeps the player's turn")
     void hittingAShipKeepsPlayerTurn() {
-        Ship frigate = TestShipFactory.createShip(ShipType.FRIGATE, Orientation.HORIZONTAL, new Coordinate(3, 3));
-        machineBoard.placeShip(frigate);
+        Ship destroyer = TestShipFactory.createShip(ShipType.DESTROYER, Orientation.HORIZONTAL, new Coordinate(3, 3));
+        machineBoard.placeShip(destroyer);
 
-        gameService.fireAt(new Coordinate(3, 3));
+        gameService.fireAt(new Coordinate(3, 3)); // Solo la primera celda del destructor.
 
         assertEquals("PLAYER_TURN", gameService.getCurrentState().getPhaseName());
-        assertTrue(machineBoard.isFleetSunk()); // Frigata: 1 celda, ya hundida.
+        assertFalse(machineBoard.isFleetSunk()); // Aún queda una celda sin tocar.
+    }
+
+    @Test
+    @DisplayName("sinking a ship whose hit does NOT clear the whole fleet still keeps the player's turn")
+    void sinkingOneShipWithoutClearingFleetKeepsPlayerTurn() {
+        Ship frigate = TestShipFactory.createShip(ShipType.FRIGATE, Orientation.HORIZONTAL, new Coordinate(1, 1));
+        Ship destroyer = TestShipFactory.createShip(ShipType.DESTROYER, Orientation.HORIZONTAL, new Coordinate(5, 5));
+        machineBoard.placeShip(frigate);
+        machineBoard.placeShip(destroyer);
+
+        gameService.fireAt(new Coordinate(1, 1)); // Hunde la frigata, pero el destructor sigue vivo.
+
+        assertEquals("PLAYER_TURN", gameService.getCurrentState().getPhaseName());
+        assertFalse(machineBoard.isFleetSunk());
     }
 
     @Test

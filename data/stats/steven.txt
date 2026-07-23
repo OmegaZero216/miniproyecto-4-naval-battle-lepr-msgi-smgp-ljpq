@@ -1,5 +1,5 @@
 nickname=steven
-gamesWon=2
+gamesWon=3
 gamesLost=0
-totalShotsFired=132
-totalShipsSunkByPlayer=20
+totalShotsFired=191
+totalShipsSunkByPlayer=30

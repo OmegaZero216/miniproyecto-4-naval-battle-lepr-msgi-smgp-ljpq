@@ -21,8 +21,11 @@
                     <VBox fx:id="fleetPanel" spacing="12" />
                 </VBox>
                 <VBox alignment="CENTER" spacing="10">
-                    <Label styleClass="board-title" text="Tu tablero" />
-                    <GridPane fx:id="placementGrid" />
+                    <Label text="Tu tablero" styleClass="board-title"/>
+                    <StackPane>
+                        <GridPane fx:id="placementGrid"/>
+                        <Pane fx:id="placedShipsOverlay" mouseTransparent="true" pickOnBounds="false"/>
+                    </StackPane>
                 </VBox>
             </HBox>
             <!-- Capa flotante para el "fantasma" del barco arrastrado. mouseTransparent

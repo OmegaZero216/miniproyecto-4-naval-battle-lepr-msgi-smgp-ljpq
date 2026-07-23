@@ -25,36 +25,12 @@ public final class ShipPaletteItem {
 
     private static final int SEGMENT_SIZE = 24;
 
-    private ShipPaletteItem() {
-    }
-
-    public static Group create(ShipType type, Orientation orientation) {
-        javafx.scene.layout.Pane hull;
-        if (orientation == Orientation.HORIZONTAL) {
-            HBox hbox = new HBox();
-            hbox.setAlignment(Pos.CENTER);
-            hull = hbox;
-        } else {
-            VBox vbox = new VBox();
-            vbox.setAlignment(Pos.CENTER);
-            hull = vbox;
+        private ShipPaletteItem() {
         }
 
-        for (int i = 0; i < type.getSize(); i++) {
-            boolean isBow = (i == 0); // primer segmento = proa
-            hull.getChildren().add(segment(isBow, orientation));
+        public static Group create(ShipType type, Orientation orientation) {
+            return ShipShapeFactory.createShipShape(type, orientation);
         }
-
-        Label nameLabel = new Label(displayName(type));
-        nameLabel.getStyleClass().add("ship-label");
-
-        VBox container = new VBox(4, nameLabel, hull);
-        container.setAlignment(Pos.CENTER);
-
-        Group group = new Group(container);
-        group.setUserData(type); // Permite recuperar el ShipType al soltar en el tablero.
-        return group;
-    }
 
     private static Group segment(boolean isBow, Orientation orientation) {
         javafx.scene.paint.LinearGradient metal = new javafx.scene.paint.LinearGradient(

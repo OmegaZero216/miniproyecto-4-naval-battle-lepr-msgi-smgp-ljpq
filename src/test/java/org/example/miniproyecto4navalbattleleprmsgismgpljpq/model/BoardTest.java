@@ -79,6 +79,12 @@ class BoardTest {
     }
 
     @Test
+    @DisplayName("isFleetSunk is false for a board with no ships placed (guards against vacuous truth)")
+    void fleetNotSunkWhenNoShipsPlaced() {
+        assertFalse(board.isFleetSunk());
+    }
+
+    @Test
     @DisplayName("getSunkShipCount reflects only fully-sunk ships, not partially hit ones")
     void sunkShipCountCountsOnlyFullySunkShips() {
         Ship destroyer = TestShipFactory.createShip(ShipType.DESTROYER, Orientation.HORIZONTAL, new Coordinate(0, 0));

@@ -2,6 +2,7 @@ package org.example.miniproyecto4navalbattleleprmsgismgpljpq.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
@@ -28,9 +29,7 @@ import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.ShipPaletteItem
 import org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.BoardHeaderFactory;
 
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 /**
  * Controller for the ship-placement screen. Contains no rule logic of
@@ -49,6 +48,7 @@ public class PreparationController {
     @FXML private Label hintLabel;
     @FXML private VBox fleetPanel;
     @FXML private Pane dragOverlay;
+    @FXML private javafx.scene.layout.Pane placedShipsOverlay;
 
     private SceneManager sceneManager;
     private Board playerBoard;
@@ -61,6 +61,7 @@ public class PreparationController {
     private double lastDragSceneX;
     private double lastDragSceneY;
     private String nickname;
+    private final Map<Coordinate, Node> placementCellNodes = new HashMap<>();
 
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -95,8 +96,6 @@ public class PreparationController {
                 case R -> {
                     if (draggingType != null) {
                         rotateWhileDragging();
-                    } else {
-                        handleRotate();
                     }
                 }
                 case ESCAPE -> handleCancelSelection();
@@ -142,6 +141,26 @@ public class PreparationController {
         }
     }
 
+    private void renderPlacedShipsOverlay() {
+        placedShipsOverlay.getChildren().clear();
+        for (Ship ship : playerBoard.getShips().values()) {
+            int minRow = ship.getOccupiedCoordinates().stream().mapToInt(Coordinate::row).min().orElse(0);
+            int minCol = ship.getOccupiedCoordinates().stream().mapToInt(Coordinate::column).min().orElse(0);
+
+            Node anchorCell = placementCellNodes.get(new Coordinate(minRow, minCol));
+            if (anchorCell == null) continue;
+
+            javafx.geometry.Bounds boundsInScene = anchorCell.localToScene(anchorCell.getBoundsInLocal());
+            javafx.geometry.Point2D overlayPoint = placedShipsOverlay.sceneToLocal(
+                    boundsInScene.getMinX(), boundsInScene.getMinY());
+
+            Group shape = org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.ShipShapeFactory
+                    .createShipShape(ship.getType(), ship.getOrientation());
+            shape.setLayoutX(overlayPoint.getX());
+            shape.setLayoutY(overlayPoint.getY());
+            placedShipsOverlay.getChildren().add(shape);
+        }
+    }
     /**
      * Manual mouse-based drag, replacing the native Dragboard API. We take
      * full control of a floating "ghost" node so it can follow the cursor
@@ -248,14 +267,14 @@ public class PreparationController {
 
     private void renderGrid() {
         placementGrid.getChildren().clear();
-        BoardHeaderFactory.addHeaders(placementGrid);
+        placementCellNodes.clear();
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 Coordinate coordinate = new Coordinate(row, col);
                 Group shape = CellShapeFactory.createShapeFor(
                         playerBoard.getCell(coordinate).getState());
-                attachDropTarget(shape, coordinate);
-                placementGrid.add(shape, col + 1, row + 1);
+                placementCellNodes.put(coordinate, shape);
+                placementGrid.add(shape, col + 1, row + 1); // ← +1, consistente con el resto
             }
         }
     }
@@ -293,6 +312,7 @@ public class PreparationController {
             placementService.placeShip(builder.build());
             pendingShips.pollFirst();
             refreshCells(coordinates);
+            renderPlacedShipsOverlay(); // ← nueva línea
             renderFleetPanel();
             updateHint();
             return true;
@@ -327,7 +347,6 @@ public class PreparationController {
     private void handleRotate() {
         currentOrientation = currentOrientation == Orientation.HORIZONTAL
                 ? Orientation.VERTICAL : Orientation.HORIZONTAL;
-        renderFleetPanel(); // Repinta los items pendientes en la nueva orientación.
         hintLabel.setText("Orientación: " + currentOrientation);
 
         placementGrid.requestFocus();

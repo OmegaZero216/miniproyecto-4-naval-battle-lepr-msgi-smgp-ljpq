@@ -79,7 +79,7 @@ public class Board implements Serializable {
     }
 
     public boolean isFleetSunk() {
-        return ships.values().stream().allMatch(Ship::isSunk);
+        return !ships.isEmpty() && ships.values().stream().allMatch(Ship::isSunk);
     }
 
     /** Number of ships on this board that are fully sunk — used to build GameResult. */

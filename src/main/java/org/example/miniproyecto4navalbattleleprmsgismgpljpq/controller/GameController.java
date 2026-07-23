@@ -47,6 +47,8 @@ public class GameController {
     @FXML private GridPane machineGrid;
     @FXML private Button saveButton;
     @FXML private Button debugButton;
+    @FXML private javafx.scene.layout.Pane playerShipOverlay;
+    @FXML private javafx.scene.layout.Pane machineShipOverlay;
 
     private GameService gameService;
     private SceneManager sceneManager;
@@ -59,6 +61,7 @@ public class GameController {
     // Referencia a los nodos renderizados por coordenada, para poder
     // actualizar solo la celda que cambió sin redibujar todo el tablero.
     private final Map<Coordinate, Group> machineCellNodes = new HashMap<>();
+    private final Map<Coordinate, Group> playerCellNodes = new HashMap<>(); // ← nuevo
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
@@ -179,39 +182,73 @@ public class GameController {
     private void renderMachineBoard(Board board) {
         machineGrid.getChildren().clear();
         machineCellNodes.clear();
-        BoardHeaderFactory.addHeaders(machineGrid);
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 Coordinate coordinate = new Coordinate(row, col);
-                CellState visible = toVisibleState(board.getCell(coordinate).getState());
-                Group shape = CellShapeFactory.createShapeFor(visible);
+                Group shape = CellShapeFactory.createShapeFor(toVisibleState(board.getCell(coordinate).getState()));
                 attachMachineCellEvents(shape, coordinate);
                 machineCellNodes.put(coordinate, shape);
-                machineGrid.add(shape, col + 1, row + 1);
+                machineGrid.add(shape, col, row);
             }
         }
+        machineGrid.applyCss();
+        machineGrid.layout();
+        renderShipOverlay(board, machineShipOverlay, machineCellNodes, debugMode);
     }
 
     private void renderPlayerBoard(Board board) {
         playerGrid.getChildren().clear();
-        BoardHeaderFactory.addHeaders(playerGrid);
+        playerCellNodes.clear();
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 Coordinate coordinate = new Coordinate(row, col);
-                Group shape = CellShapeFactory.createShapeFor(
-                        board.getCell(coordinate).getState());
-                playerGrid.add(shape, col + 1, row + 1);
+                Group shape = CellShapeFactory.createShapeFor(board.getCell(coordinate).getState());
+                playerCellNodes.put(coordinate, shape);
+                playerGrid.add(shape, col, row);
             }
         }
+        playerGrid.applyCss();
+        playerGrid.layout();
+        renderShipOverlay(board, playerShipOverlay, playerCellNodes, true);
     }
 
     private void refreshPlayerCell(Coordinate coordinate) {
         Group updated = CellShapeFactory.createShapeFor(
                 gameService.getPlayerBoard().getCell(coordinate).getState());
-        playerGrid.getChildren().removeIf(node ->
-                GridPane.getRowIndex(node) == coordinate.row() + 1
-                        && GridPane.getColumnIndex(node) == coordinate.column() + 1);
-        playerGrid.add(updated, coordinate.column() + 1, coordinate.row() + 1);
+        Group old = playerCellNodes.get(coordinate);
+        playerGrid.getChildren().remove(old);
+        playerGrid.add(updated, coordinate.column(), coordinate.row());
+        playerCellNodes.put(coordinate, updated);
+        playerGrid.applyCss();
+        playerGrid.layout();
+        renderShipOverlay(gameService.getPlayerBoard(), playerShipOverlay, playerCellNodes, true);
+    }
+
+    private void renderShipOverlay(Board board, javafx.scene.layout.Pane overlay,
+                                   Map<Coordinate, Group> cellNodes, boolean visible) {
+        overlay.getChildren().clear();
+        if (!visible) return;
+
+        for (Ship ship : board.getShips().values()) {
+            if (ship.isSunk()) continue;
+
+            int minRow = ship.getOccupiedCoordinates().stream().mapToInt(Coordinate::row).min().orElse(0);
+            int minCol = ship.getOccupiedCoordinates().stream().mapToInt(Coordinate::column).min().orElse(0);
+
+            Group anchorCell = cellNodes.get(new Coordinate(minRow, minCol));
+            if (anchorCell == null) continue;
+
+            javafx.geometry.Bounds boundsInScene = anchorCell.localToScene(anchorCell.getBoundsInLocal());
+            javafx.geometry.Point2D overlayPoint = overlay.sceneToLocal(
+                    boundsInScene.getMinX(), boundsInScene.getMinY());
+
+            Group shape = org.example.miniproyecto4navalbattleleprmsgismgpljpq.view.ShipShapeFactory
+                    .createShipShape(ship.getType(), ship.getOrientation());
+            shape.setLayoutX(overlayPoint.getX());
+            shape.setLayoutY(overlayPoint.getY());
+            shape.setOpacity(0.92);
+            overlay.getChildren().add(shape);
+        }
     }
 
     private void attachMachineCellEvents(Group shape, Coordinate coordinate) {
@@ -278,6 +315,9 @@ public class GameController {
         machineGrid.getChildren().remove(old);
         machineGrid.add(updated, col, row);
         machineCellNodes.put(coordinate, updated);
+        machineGrid.applyCss();
+        machineGrid.layout();
+        renderShipOverlay(gameService.getMachineBoard(), machineShipOverlay, machineCellNodes, debugMode);
     }
 
     private void updateStatusLabels() {

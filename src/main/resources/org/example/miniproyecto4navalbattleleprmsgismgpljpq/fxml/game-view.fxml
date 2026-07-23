@@ -29,6 +29,7 @@
                 <Label text="Tu flota" styleClass="board-title"/>
                 <StackPane fx:id="playerBoardContainer">
                     <GridPane fx:id="playerGrid" styleClass="board-grid"/>
+                    <Pane fx:id="playerShipOverlay" mouseTransparent="true" pickOnBounds="false"/>
                 </StackPane>
             </VBox>
 
@@ -37,7 +38,7 @@
                 <Label text="Tablero enemigo" styleClass="board-title"/>
                 <StackPane fx:id="machineBoardContainer">
                     <GridPane fx:id="machineGrid" styleClass="board-grid"/>
-                    <!-- Overlay de fin de juego, oculto por defecto -->
+                    <Pane fx:id="machineShipOverlay" mouseTransparent="true" pickOnBounds="false"/>
                     <AnchorPane fx:id="gameOverOverlay" visible="false" styleClass="game-over-overlay">
                         <Label fx:id="gameOverLabel" text="¡Victoria!"
                                AnchorPane.topAnchor="80" AnchorPane.leftAnchor="60"
